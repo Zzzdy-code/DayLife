@@ -1,0 +1,20 @@
+<view class="flex flex-col items-center justify-center min-h-screen px-10 py-15 bg-gradient-to-br">
+  <view class="w-50 h-50 mb-10">
+    <image src="/assets/images/logo.png" mode="aspectFit" class="w-full h-full"></image>
+  </view>
+  
+  <view class="text-6xl font-bold text-white mb-5">DayLife</view>
+  <view class="text-3xl text-white/80 mb-20">记录每一天</view>
+  
+  <button 
+    class="w-full h-22 leading-22 bg-white text-purple-600 text-4xl font-bold rounded-full mb-10 {{loading ? 'opacity-60' : ''}}"
+    bindtap="handleLogin"
+    disabled="{{loading}}"
+  >
+    {{loading ? '登录中...' : '微信登录'}}
+  </button>
+  
+  <view class="text-3xl text-white/60 text-center">
+    登录即表示同意《用户协议》和《隐私政策》
+  </view>
+</view>

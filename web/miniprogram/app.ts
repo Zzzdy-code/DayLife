@@ -1,18 +1,26 @@
-// app.ts
-App<IAppOption>({
-  globalData: {},
-  onLaunch() {
-    // 展示本地存储能力
-    const logs = wx.getStorageSync('logs') || []
-    logs.unshift(Date.now())
-    wx.setStorageSync('logs', logs)
+import userStore from './stores/userStore';
 
-    // 登录
-    wx.login({
-      success: res => {
-        console.log(res.code)
-        // 发送 res.code 到后台换取 openId, sessionKey, unionId
-      },
-    })
+App({
+  /**
+   * 小程序初始化
+   */
+  onLaunch() {
+    // 初始化 Store（从本地存储恢复）
+    userStore.init();
+    
+    // 检查登录状态
+    this.checkLogin();
   },
-})
+
+  /**
+   * 检查登录状态
+   */
+  checkLogin() {
+    // 如果未登录，跳转登录页
+    if (!userStore.isLoggedIn) {
+      wx.reLaunch({
+        url: '/pages/login/index',
+      });
+    }
+  },
+});

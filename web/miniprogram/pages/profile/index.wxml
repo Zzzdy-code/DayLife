@@ -1,0 +1,24 @@
+<view class="min-h-screen bg-gray-50">
+  <view class="px-8 py-10 bg-white mb-6">
+    <view class="flex items-center mb-6">
+      <image 
+        wx:if="{{userInfo && userInfo.avatarUrl}}"
+        src="{{userInfo.avatarUrl}}" 
+        class="w-20 h-20 rounded-full mr-6"
+      />
+      <view class="flex-1">
+        <text class="text-4xl font-bold text-gray-800">{{userInfo && userInfo.nickname || '未设置昵称'}}</text>
+        <text class="block text-3xl text-gray-400 mt-2">ID: {{userInfo && userInfo.id || ''}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="bg-white">
+    <view class="px-8 py-6 border-b border-gray-200">
+      <text class="text-3xl text-gray-600">设置</text>
+    </view>
+    <view class="px-8 py-6 border-b border-gray-200" bindtap="handleLogout">
+      <text class="text-3xl text-red-600">退出登录</text>
+    </view>
+  </view>
+</view>

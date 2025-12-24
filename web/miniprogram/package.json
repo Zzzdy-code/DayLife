@@ -19,6 +19,10 @@
     "weapp-tailwindcss": "^4.9.1"
   },
   "dependencies": {
-    "@vant/weapp": "^1.11.7"
+    "@vant/weapp": "^1.11.7",
+    "dayjs": "^1.11.19",
+    "flyio": "^0.6.14",
+    "mobx-miniprogram": "^6.12.3",
+    "mobx-miniprogram-bindings": "^5.1.1"
   }
 }

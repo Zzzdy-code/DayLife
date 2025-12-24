@@ -1,27 +1,37 @@
-<!--index.wxml-->
-<scroll-view class="scrollarea" scroll-y type="list">
-  <view class="container">
-    <view class="userinfo">
-      <block wx:if="{{canIUseNicknameComp && !hasUserInfo}}">
-        <button class="avatar-wrapper" open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar">
-          <image class="avatar" src="{{userInfo.avatarUrl}}"></image>
-        </button>
-        <view class="nickname-wrapper">
-          <text class="nickname-label">昵称</text>
-          <input type="nickname" class="nickname-input" placeholder="请输入昵称" bind:change="onInputChange" />
-        </view>
-      </block>
-      <block wx:elif="{{!hasUserInfo}}">
-        <button wx:if="{{canIUseGetUserProfile}}" bindtap="getUserProfile"> 获取头像昵称 </button>
-        <view wx:else> 请使用2.10.4及以上版本基础库 </view>
-      </block>
-      <block wx:else>
-        <image bindtap="bindViewTap" class="userinfo-avatar" src="{{userInfo.avatarUrl}}" mode="cover"></image>
-        <text class="userinfo-nickname">{{userInfo.nickName}}</text>
-      </block>
-    </view>
-    <view class="usermotto">
-      <text class="user-motto">{{motto}}</text>
-    </view>
+<view class="min-h-screen bg-gray-50 pb-10">
+  <!-- 日期显示 -->
+  <view class="px-8 py-10 bg-white border-b border-gray-200">
+    <text class="text-5xl font-bold text-gray-800">{{currentDate}}</text>
   </view>
-</scroll-view>
+
+  <!-- 日程模块 -->
+  <view class="mx-8 mt-6 p-8 bg-white rounded-4">
+    <view class="flex items-center mb-6">
+      <text class="text-4xl font-bold text-gray-800">📋 今日日程</text>
+      <text class="text-3xl text-gray-400 ml-2">({{schedules.length}})</text>
+    </view>
+
+    <!-- 日程列表 -->
+    <view wx:if="{{schedules.length > 0}}" class="mb-6">
+      <schedule-card
+        wx:for="{{schedules}}"
+        wx:key="id"
+        schedule="{{item}}"
+        bindtap="handleScheduleTap"
+      />
+    </view>
+
+    <!-- 空状态 -->
+    <view wx:else class="py-15 text-center text-gray-400 text-3xl">
+      <text>今天还没有日程</text>
+    </view>
+
+    <!-- 添加按钮 -->
+    <button 
+      class="w-full h-20 leading-20 bg-blue-600 text-white text-3xl rounded-2 mt-6"
+      bindtap="handleAddSchedule"
+    >
+      + 添加日程
+    </button>
+  </view>
+</view>

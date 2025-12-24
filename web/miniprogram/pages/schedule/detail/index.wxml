@@ -1,0 +1,86 @@
+<view class="min-h-screen bg-gray-50 pb-30">
+  <view class="mx-8 mt-6 p-8 bg-white rounded-4">
+    <!-- 标题 -->
+    <view class="mb-6">
+      <text class="text-3xl text-gray-600 mb-2 block">标题</text>
+      <input 
+        class="w-full h-20 px-4 border border-gray-300 rounded-2 text-3xl"
+        placeholder="请输入日程标题"
+        value="{{title}}"
+        bindinput="onTitleInput"
+      />
+    </view>
+
+    <!-- 日期 -->
+    <view class="mb-6">
+      <text class="text-3xl text-gray-600 mb-2 block">日期</text>
+      <picker mode="date" value="{{date}}" bindchange="onDateChange">
+        <view class="w-full h-20 px-4 border border-gray-300 rounded-2 flex items-center text-3xl">
+          {{date || '请选择日期'}}
+        </view>
+      </picker>
+    </view>
+
+    <!-- 开始时间 -->
+    <view class="mb-6">
+      <text class="text-3xl text-gray-600 mb-2 block">开始时间</text>
+      <picker mode="time" value="{{startTime}}" bindchange="onStartTimeChange">
+        <view class="w-full h-20 px-4 border border-gray-300 rounded-2 flex items-center text-3xl">
+          {{startTime || '请选择开始时间'}}
+        </view>
+      </picker>
+    </view>
+
+    <!-- 结束时间 -->
+    <view class="mb-6">
+      <text class="text-3xl text-gray-600 mb-2 block">结束时间</text>
+      <picker mode="time" value="{{endTime}}" bindchange="onEndTimeChange">
+        <view class="w-full h-20 px-4 border border-gray-300 rounded-2 flex items-center text-3xl">
+          {{endTime || '请选择结束时间'}}
+        </view>
+      </picker>
+    </view>
+
+    <!-- 地点 -->
+    <view class="mb-6">
+      <text class="text-3xl text-gray-600 mb-2 block">地点</text>
+      <input 
+        class="w-full h-20 px-4 border border-gray-300 rounded-2 text-3xl"
+        placeholder="请输入地点（可选）"
+        value="{{location}}"
+        bindinput="onLocationInput"
+      />
+    </view>
+
+    <!-- 描述 -->
+    <view class="mb-6">
+      <text class="text-3xl text-gray-600 mb-2 block">描述</text>
+      <textarea 
+        class="w-full min-h-40 px-4 py-4 border border-gray-300 rounded-2 text-3xl"
+        placeholder="请输入描述（可选）"
+        value="{{description}}"
+        bindinput="onDescriptionInput"
+      />
+    </view>
+  </view>
+
+  <!-- 操作按钮 -->
+  <view class="fixed bottom-0 left-0 right-0 px-8 py-6 bg-white border-t border-gray-200">
+    <view class="flex gap-4">
+      <button 
+        wx:if="{{id}}"
+        class="flex-1 h-20 leading-20 bg-red-600 text-white text-3xl rounded-2"
+        bindtap="handleDelete"
+      >
+        删除
+      </button>
+      <button 
+        class="flex-1 h-20 leading-20 bg-blue-600 text-white text-3xl rounded-2"
+        bindtap="handleSave"
+        disabled="{{loading}}"
+      >
+        {{loading ? '保存中...' : '保存'}}
+      </button>
+    </view>
+  </view>
+</view>

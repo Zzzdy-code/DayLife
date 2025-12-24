@@ -1,54 +1,123 @@
-// index.ts
-// 获取应用实例
-const app = getApp<IAppOption>()
-const defaultAvatarUrl = 'https://mmbiz.qpic.cn/mmbiz/icTdbqWNOwNRna42FI242Lcia07jQodd2FJGIYQfG0LAJGFxM4FbnQP6yfMxBgJ0F3YRqJCJ1aPAK2dQagdusBZg/0'
+import * as api from '../../utils/api';
+import { createStoreBindings } from 'mobx-miniprogram-bindings';
+import userStore from '../../stores/userStore';
+import { getToday } from '../../utils/util';
+import { Schedule } from '../../utils/api';
 
-Component({
+interface IIndexPageData {
+  currentDate: string;
+  schedules: Schedule[];
+  loading: boolean;
+  isLoggedIn: boolean;
+  userInfo: any;
+}
+
+Page<IIndexPageData>({
+  /**
+   * 页面的初始数据
+   */
   data: {
-    motto: 'Hello World',
-    userInfo: {
-      avatarUrl: defaultAvatarUrl,
-      nickName: '',
-    },
-    hasUserInfo: false,
-    canIUseGetUserProfile: wx.canIUse('getUserProfile'),
-    canIUseNicknameComp: wx.canIUse('input.type.nickname'),
+    currentDate: '',  // 当前日期（YYYY-MM-DD）
+    schedules: [],     // 日程列表
+    loading: false,
+    isLoggedIn: false,
+    userInfo: null,
   },
-  methods: {
-    // 事件处理函数
-    bindViewTap() {
-      wx.navigateTo({
-        url: '../logs/logs',
-      })
-    },
-    onChooseAvatar(e: any) {
-      const { avatarUrl } = e.detail
-      const { nickName } = this.data.userInfo
-      this.setData({
-        "userInfo.avatarUrl": avatarUrl,
-        hasUserInfo: nickName && avatarUrl && avatarUrl !== defaultAvatarUrl,
-      })
-    },
-    onInputChange(e: any) {
-      const nickName = e.detail.value
-      const { avatarUrl } = this.data.userInfo
-      this.setData({
-        "userInfo.nickName": nickName,
-        hasUserInfo: nickName && avatarUrl && avatarUrl !== defaultAvatarUrl,
-      })
-    },
-    getUserProfile() {
-      // 推荐使用wx.getUserProfile获取用户信息，开发者每次通过该接口获取用户个人信息均需用户确认，开发者妥善保管用户快速填写的头像昵称，避免重复弹窗
-      wx.getUserProfile({
-        desc: '展示用户信息', // 声明获取用户个人信息后的用途，后续会展示在弹窗中，请谨慎填写
-        success: (res) => {
-          console.log(res)
-          this.setData({
-            userInfo: res.userInfo,
-            hasUserInfo: true
-          })
-        }
-      })
-    },
+
+  /**
+   * 生命周期函数--监听页面加载
+   */
+  onLoad() {
+    // 绑定 Store
+    this.storeBindings = createStoreBindings(this, {
+      store: userStore,
+      fields: ['isLoggedIn', 'userInfo'],
+    });
+
+    // 检查登录
+    if (!this.data.isLoggedIn) {
+      wx.reLaunch({
+        url: '/pages/login/index',
+      });
+      return;
+    }
+
+    // 初始化日期（使用 dayjs）
+    this.setData({
+      currentDate: getToday(),
+    });
+
+    // 加载日程
+    this.loadSchedules();
   },
-})
+
+  /**
+   * 生命周期函数--监听页面卸载
+   */
+  onUnload() {
+    // 解绑 Store
+    this.storeBindings.destroyStoreBindings();
+  },
+
+  /**
+   * 生命周期函数--监听页面显示
+   */
+  onShow() {
+    // 每次显示时刷新数据
+    this.loadSchedules();
+  },
+
+  /**
+   * 下拉刷新
+   */
+  onPullDownRefresh() {
+    this.loadSchedules().finally(() => {
+      wx.stopPullDownRefresh();
+    });
+  },
+
+  /**
+   * 加载日程列表
+   */
+  async loadSchedules(): Promise<void> {
+    if (this.data.loading) {
+      return;
+    }
+
+    this.setData({ loading: true });
+
+    try {
+      const schedules = await api.getScheduleByDate(this.data.currentDate);
+      this.setData({
+        schedules: schedules || [],
+      });
+    } catch (error) {
+      console.error('加载日程失败:', error);
+      wx.showToast({
+        title: '加载失败，请重试',
+        icon: 'none',
+      });
+    } finally {
+      this.setData({ loading: false });
+    }
+  },
+
+  /**
+   * 点击日程卡片
+   */
+  handleScheduleTap(e: any) {
+    const { schedule } = e.detail;
+    wx.navigateTo({
+      url: `/pages/schedule/detail?id=${schedule.id}`,
+    });
+  },
+
+  /**
+   * 添加日程
+   */
+  handleAddSchedule() {
+    wx.navigateTo({
+      url: '/pages/schedule/detail',
+    });
+  },
+});
